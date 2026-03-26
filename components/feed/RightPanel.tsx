@@ -1,32 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, Activity, TrendingUp, Star, Calendar, CheckCircle2, ArrowRight } from "lucide-react";
+import { UserPlus, Activity, TrendingUp, Star, Calendar, CheckCircle2, ArrowRight, Heart, Zap, Code2, Palette } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
+// Indian names for suggested users
 const ACTIVITY_ITEMS = [
-  { id: "a1", user: "nova.dev", action: "started following you", time: "2m", initials: "ND", color: "from-primary/30 to-secondary/20" },
-  { id: "a2", user: "Lyra Arts", action: "liked your post", time: "9m", initials: "LA", color: "from-pink-400/30 to-purple-400/20" },
-  { id: "a3", user: "buildwithkai", action: "commented on your project", time: "23m", initials: "BK", color: "from-emerald-400/30 to-cyan-400/20" },
-  { id: "a4", user: "SynthWave", action: "is now supporting you", time: "1h", initials: "SW", color: "from-amber-400/30 to-orange-400/20" },
+  { id: "a1", user: "Ananya Sharma", handle: "ananya.designs", action: "started following you", time: "2m", initials: "AS", color: "from-rose-400/40 to-pink-400/30" },
+  { id: "a2", user: "Rohan Verma", handle: "rohan.codes", action: "liked your post", time: "9m", initials: "RV", color: "from-emerald-400/40 to-teal-400/30" },
+  { id: "a3", user: "Priya Patel", handle: "priya.builds", action: "commented on your project", time: "23m", initials: "PP", color: "from-violet-400/40 to-purple-400/30" },
+  { id: "a4", user: "Arjun Reddy", handle: "arjun.art", action: "is now supporting you", time: "1h", initials: "AR", color: "from-sky-400/40 to-blue-400/30" },
 ];
 
 const SUGGESTIONS = [
-  { id: "s1", name: "Aria Chen", handle: "aria.creates", role: "Creator", initials: "AC", color: "from-pink-400/30 to-violet-400/20" },
-  { id: "s2", name: "Miles Okonjo", handle: "milesdev", role: "Developer", initials: "MO", color: "from-primary/30 to-secondary/20" },
-  { id: "s3", name: "Luna Park", handle: "lunacodes", role: "Developer", initials: "LP", color: "from-emerald-400/30 to-cyan-400/20" },
-  { id: "s4", name: "Zara Voss", handle: "zaravisuals", role: "Creator", initials: "ZV", color: "from-amber-400/30 to-rose-400/20" },
+  { id: "s1", name: "Ishaan Gupta", handle: "ishaan.creates", role: "Creator", initials: "IG", color: "from-amber-400/40 to-orange-400/30" },
+  { id: "s2", name: "Kavya Nair", handle: "kavya.dev", role: "Developer", initials: "KN", color: "from-cyan-400/40 to-indigo-400/30" },
+  { id: "s3", name: "Dhruv Menon", handle: "dhruv.codes", role: "Developer", initials: "DM", color: "from-sky-400/40 to-blue-400/30" },
+  { id: "s4", name: "Zara Khan", handle: "zara.visuals", role: "Creator", initials: "ZK", color: "from-rose-400/40 to-fuchsia-400/30" },
 ];
 
 const TRENDING = [
-  { id: "t1", name: "Kai Bennett", handle: "kaibuilds", tag: "Open Source", initials: "KB", color: "from-primary/30 to-secondary/20" },
-  { id: "t2", name: "Noor Patel", handle: "noor.art", tag: "Illustration", initials: "NP", color: "from-purple-400/30 to-pink-400/20" },
-  { id: "t3", name: "Sam Osei", handle: "sambuilds", tag: "React / Next.js", initials: "SO", color: "from-sky-400/30 to-indigo-400/20" },
+  { id: "t1", name: "Nikhil Rao", handle: "nikhil.builds", tag: "Open Source", initials: "NR", color: "from-emerald-400/40 to-teal-400/30" },
+  { id: "t2", name: "Leela Sharma", handle: "leela.art", tag: "Illustration", initials: "LS", color: "from-violet-400/40 to-purple-400/30" },
+  { id: "t3", name: "Ravi Kumar", handle: "ravi.dev", tag: "React / Next.js", initials: "RK", color: "from-sky-400/40 to-indigo-400/30" },
 ];
 
 const EVENTS = [
-  { title: "Creator Spotlight: Aria Chen", date: "Mar 26" },
+  { title: "Creator Spotlight: Kavya Nair", date: "Mar 26" },
   { title: "Dev Meetup — Open Source Hour", date: "Mar 28" },
   { title: "Patronex Community AMA", date: "Apr 2" },
 ];
@@ -37,16 +38,16 @@ export function RightPanel() {
   return (
     <aside className="sticky top-[80px] space-y-4 h-fit">
       {/* Profile completion card */}
-      <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/10 p-4">
+      <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/10 p-4 card-depth hover:shadow-lg transition-shadow duration-300">
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 animate-pulse-soft">
             <CheckCircle2 size={16} className="text-primary" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground">Complete your profile</p>
             <p className="text-xs text-muted-foreground mt-0.5">Add a bio and link to boost visibility</p>
             <div className="mt-3 h-1.5 rounded-full bg-border/40 overflow-hidden">
-              <div className="h-full w-[65%] rounded-full bg-gradient-to-r from-primary to-secondary/80 transition-all duration-700" />
+              <div className="h-full w-[65%] rounded-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-700 animate-shimmer" />
             </div>
             <p className="text-[11px] text-muted-foreground mt-1.5">65% complete</p>
           </div>
@@ -56,16 +57,20 @@ export function RightPanel() {
       {/* Activity */}
       <PanelSection title="Activity" icon={Activity}>
         <div className="space-y-3">
-          {ACTIVITY_ITEMS.map((item) => (
-            <div key={item.id} className="flex items-center gap-2.5 group">
-              <Avatar className="h-7 w-7 shrink-0 border border-border/30">
+          {ACTIVITY_ITEMS.map((item, index) => (
+            <div 
+              key={item.id} 
+              className="flex items-center gap-2.5 group cursor-pointer animate-slide-in-up"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <Avatar className="h-7 w-7 shrink-0 border border-border/30 group-hover:scale-110 transition-transform duration-200">
                 <AvatarFallback className={cn("text-[10px] font-bold bg-gradient-to-br", item.color)}>
                   {item.initials}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-foreground/90 leading-snug">
-                  <span className="font-semibold">@{item.user}</span>{" "}
+                  <span className="font-semibold hover:text-primary transition-colors">@{item.handle}</span>{" "}
                   <span className="text-muted-foreground">{item.action}</span>
                 </p>
               </div>
@@ -78,24 +83,29 @@ export function RightPanel() {
       {/* Suggested */}
       <PanelSection title="Suggested for you" icon={Star}>
         <div className="space-y-3">
-          {SUGGESTIONS.map((s) => (
-            <div key={s.id} className="flex items-center gap-2.5">
-              <Avatar className="h-8 w-8 shrink-0 border border-border/30">
+          {SUGGESTIONS.map((s, index) => (
+            <div 
+              key={s.id} 
+              className="flex items-center gap-2.5 group animate-slide-in-up"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <Avatar className="h-8 w-8 shrink-0 border border-border/30 group-hover:scale-110 transition-transform duration-200">
                 <AvatarFallback className={cn("text-xs font-bold bg-gradient-to-br", s.color)}>
                   {s.initials}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-foreground truncate">{s.name}</p>
+                <p className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{s.name}</p>
                 <p className="text-[10px] text-muted-foreground">@{s.handle} · {s.role}</p>
               </div>
               <button
                 onClick={() => setFollowing((prev) => ({ ...prev, [s.id]: !prev[s.id] }))}
                 className={cn(
-                  "shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-200",
+                  "shrink-0 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-300",
+                  "hover:scale-105 active:scale-95",
                   following[s.id]
                     ? "bg-primary/10 text-primary border border-primary/30"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] shadow-[0_2px_8px_rgba(54,84,134,0.25)]"
+                    : "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:shadow-md shadow-sm"
                 )}
               >
                 {following[s.id] ? "Following" : "Follow"}
@@ -109,9 +119,13 @@ export function RightPanel() {
       <PanelSection title="Trending" icon={TrendingUp}>
         <div className="space-y-2.5">
           {TRENDING.map((t, i) => (
-            <div key={t.id} className="flex items-center gap-2.5 group cursor-pointer">
+            <div 
+              key={t.id} 
+              className="flex items-center gap-2.5 group cursor-pointer animate-slide-in-up"
+              style={{ animationDelay: `${i * 50}ms` }}
+            >
               <span className="text-[11px] font-bold text-muted-foreground/40 w-4 text-center">{i + 1}</span>
-              <Avatar className="h-7 w-7 shrink-0 border border-border/30">
+              <Avatar className="h-7 w-7 shrink-0 border border-border/30 group-hover:scale-110 transition-transform duration-200">
                 <AvatarFallback className={cn("text-[10px] font-bold bg-gradient-to-br", t.color)}>
                   {t.initials}
                 </AvatarFallback>
@@ -129,7 +143,11 @@ export function RightPanel() {
       <PanelSection title="Upcoming" icon={Calendar}>
         <div className="space-y-2.5">
           {EVENTS.map((e, i) => (
-            <div key={i} className="flex items-start gap-3 group cursor-pointer">
+            <div 
+              key={i} 
+              className="flex items-start gap-3 group cursor-pointer animate-slide-in-up"
+              style={{ animationDelay: `${i * 50}ms` }}
+            >
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-foreground/90 leading-snug group-hover:text-primary transition-colors">{e.title}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{e.date}</p>
@@ -139,6 +157,13 @@ export function RightPanel() {
           ))}
         </div>
       </PanelSection>
+
+      {/* Footer */}
+      <div className="px-4 py-3 text-center">
+        <p className="text-[10px] text-muted-foreground/60">
+          Made with <Heart size={10} className="inline text-rose-400 mx-0.5" /> in India
+        </p>
+      </div>
     </aside>
   );
 }
@@ -153,7 +178,7 @@ function PanelSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border/35 bg-card/70 backdrop-blur-sm p-4">
+    <div className="rounded-2xl border border-border/30 bg-gradient-to-b from-card/90 to-card/70 backdrop-blur-sm p-4 card-depth hover:shadow-md transition-shadow duration-300">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Icon size={13} className="text-muted-foreground/70" />
