@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithRedirect, onAuthStateChanged } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 
 export default function SignInPage() {
@@ -15,6 +15,15 @@ export default function SignInPage() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   useEffect(() => {
     setMounted(true);
@@ -537,8 +546,7 @@ export default function SignInPage() {
               type="button" 
               onClick={async () => {
                 try {
-                  await signInWithPopup(auth, googleProvider);
-                  router.push("/dashboard");
+                  await signInWithRedirect(auth, googleProvider);
                 } catch (err: any) {
                   setError(err.message || "Google sign in failed");
                 }
@@ -557,8 +565,7 @@ export default function SignInPage() {
               type="button" 
               onClick={async () => {
                 try {
-                  await signInWithPopup(auth, githubProvider);
-                  router.push("/dashboard");
+                  await signInWithRedirect(auth, githubProvider);
                 } catch (err: any) {
                   setError(err.message || "GitHub sign in failed");
                 }

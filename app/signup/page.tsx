@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithRedirect, updateProfile, onAuthStateChanged } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 
 const ROLES = [
@@ -23,6 +23,16 @@ export default function SignUpPage() {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Automatically redirect if already logged in or returning from OAuth redirect
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
 
   // Canvas particle animation
   useEffect(() => {
@@ -438,8 +448,7 @@ export default function SignUpPage() {
               type="button" 
               onClick={async () => {
                 try {
-                  await signInWithPopup(auth, googleProvider);
-                  router.push("/dashboard");
+                  await signInWithRedirect(auth, googleProvider);
                 } catch (err: any) {
                   setError(err.message || "Google sign in failed");
                 }
@@ -458,8 +467,7 @@ export default function SignUpPage() {
               type="button" 
               onClick={async () => {
                 try {
-                  await signInWithPopup(auth, githubProvider);
-                  router.push("/dashboard");
+                  await signInWithRedirect(auth, githubProvider);
                 } catch (err: any) {
                   setError(err.message || "GitHub sign in failed");
                 }
