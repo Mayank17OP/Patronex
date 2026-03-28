@@ -49,8 +49,8 @@ jobs:
         run: npm run build
         env:
           GITHUB_ACTIONS: true
-          # Project Pages: /repo-name. User site repo (owner.github.io): set to empty in repo Variables or edit here.
-          NEXT_PUBLIC_BASE_PATH: ${{ github.event.repository.name != format('{0}.github.io', github.repository_owner) && format('/{0}', github.event.repository.name) || '' }}
+          # Must match the site path: https://<user>.github.io/<repo>/ — set repo var PAGES_BASE_PATH to override (e.g. /Patronex)
+          NEXT_PUBLIC_BASE_PATH: ${{ vars.PAGES_BASE_PATH || (github.event.repository.name != format('{0}.github.io', github.repository_owner) && format('/{0}', github.event.repository.name) || '') }}
 
       - name: Add .nojekyll
         run: touch ./out/.nojekyll

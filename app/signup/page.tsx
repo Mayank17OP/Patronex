@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, signInWithRedirect, updateProfile, onAuthStateChanged } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "@/lib/firebase";
+import { formatAuthError } from "@/lib/auth-errors";
 
 const ROLES = [
   { id: "creator",   label: "Creator",   icon: "✦",    desc: "Share your work" },
@@ -448,9 +449,10 @@ export default function SignUpPage() {
               type="button" 
               onClick={async () => {
                 try {
+                  await auth.authStateReady();
                   await signInWithRedirect(auth, googleProvider);
-                } catch (err: any) {
-                  setError(err.message || "Google sign in failed");
+                } catch (err: unknown) {
+                  setError(formatAuthError(err));
                 }
               }}
             >
@@ -467,9 +469,10 @@ export default function SignUpPage() {
               type="button" 
               onClick={async () => {
                 try {
+                  await auth.authStateReady();
                   await signInWithRedirect(auth, githubProvider);
-                } catch (err: any) {
-                  setError(err.message || "GitHub sign in failed");
+                } catch (err: unknown) {
+                  setError(formatAuthError(err));
                 }
               }}
             >

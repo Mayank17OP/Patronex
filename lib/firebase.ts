@@ -18,10 +18,14 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
-// Analytics is only available in the browser context
-let analytics;
+// Analytics can throw or fail on hosts not registered in Firebase/GA; never let that break Auth.
+let analytics: ReturnType<typeof getAnalytics> | undefined;
 if (typeof window !== "undefined") {
-  analytics = getAnalytics(app);
+  try {
+    analytics = getAnalytics(app);
+  } catch {
+    analytics = undefined;
+  }
 }
 
 // Export Auth & Providers
