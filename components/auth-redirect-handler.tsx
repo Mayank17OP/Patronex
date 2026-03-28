@@ -1,32 +1,42 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-function isAuthPage(): boolean {
-  if (typeof window === "undefined") return false;
-  const path = window.location.pathname;
-  return path.includes("/signin") || path.includes("/signup");
-}
-
 export function AuthRedirectHandler() {
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const pathname = usePathname() || "";
+  const isAuthPage = pathname.includes("/signin") || pathname.includes("/signup");
+  
+  // Only show the checking spinner if we land on an auth page
+  const [checking, setChecking] = useState(isAuthPage);
 
   useEffect(() => {
+    // If not on an auth page, immediately hide spinner and do not run auth redirect checks
+    if (!isAuthPage) {
+      setChecking(false);
+      return;
+    }
+
+    setChecking(true);
     let unsub: (() => void) | null = null;
+    let cancelled = false;
 
     const init = async () => {
       // Wait for Firebase auth to be ready
       await auth.authStateReady();
+      if (cancelled) return;
 
       // Check for OAuth redirect result (Google/GitHub)
       try {
         const result = await getRedirectResult(auth);
+        if (cancelled) return;
+        
         if (result?.user) {
           console.log("[Auth] OAuth success, redirecting to dashboard");
+          setChecking(false);
           router.replace("/dashboard");
           return;
         }
@@ -35,16 +45,20 @@ export function AuthRedirectHandler() {
       }
 
       // Check if already logged in
-      if (auth.currentUser && isAuthPage()) {
+      if (auth.currentUser) {
         console.log("[Auth] Already logged in, redirecting");
+        setChecking(false);
         router.replace("/dashboard");
         return;
       }
 
-      // Listen for auth changes
+      // Listen for auth changes on login pages
       unsub = onAuthStateChanged(auth, (user) => {
-        if (user && isAuthPage()) {
+        if (cancelled) return;
+        
+        if (user) {
           console.log("[Auth] User signed in, redirecting to dashboard");
+          setChecking(false);
           router.replace("/dashboard");
         }
       });
@@ -55,11 +69,13 @@ export function AuthRedirectHandler() {
     init();
 
     return () => {
+      cancelled = true;
       unsub?.();
     };
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthPage]);
 
-  // Show spinner while checking auth
+  // Show spinner while checking auth status (only on /signin or /signup)
   if (checking) {
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060916]">

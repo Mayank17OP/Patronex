@@ -36,7 +36,8 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
       cancelled = true;
       unsubscribe?.();
     };
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!allowed) {
     return (
