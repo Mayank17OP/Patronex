@@ -1,31 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { FeedSidebar } from "@/components/feed/FeedSidebar";
-import { FeedTopBar } from "@/components/feed/FeedTopBar";
+import { SupporterSidebar } from "@/components/dashboard/SupporterSidebar";
 import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
-      <FeedSidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
+      <SupporterSidebar />
 
-      {/* Main content wrapper — shifts right based on sidebar state */}
+      {/* Main content wrapper */}
       <div
         className={cn(
           "flex flex-col flex-1 min-w-0",
-          "transition-[margin] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]",
-          sidebarCollapsed ? "ml-[72px]" : "ml-[260px]",
-          // On mobile: full width, sidebar becomes overlay
+          "ml-[280px]",
+          // On mobile: full width
           "max-md:ml-0"
         )}
       >
-        <FeedTopBar collapsed={sidebarCollapsed} />
-
-        {/* Page content — padded below the fixed top bar */}
-        <main className="flex-1 pt-[64px] px-4 md:px-6 lg:px-8 pb-10 min-h-0 relative overflow-x-hidden">
+        {/* Page content */}
+        <main className="flex-1 px-4 md:px-6 lg:px-8 py-6 min-h-0 relative overflow-x-hidden">
           {/* Subtle background mesh */}
           <div
             className="pointer-events-none absolute inset-0 z-0 opacity-30"
