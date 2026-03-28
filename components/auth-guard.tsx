@@ -13,13 +13,19 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     let unsubscribe: (() => void) | undefined;
     let cancelled = false;
 
+    console.log("[AuthGuard] Initializing...");
+
     auth.authStateReady().then(() => {
       if (cancelled) return;
+      console.log("[AuthGuard] Auth state ready, currentUser:", auth.currentUser?.email || "null");
+
       unsubscribe = onAuthStateChanged(auth, (user) => {
         if (cancelled) return;
         if (user) {
+          console.log("[AuthGuard] User authenticated:", user.email);
           setAllowed(true);
         } else {
+          console.log("[AuthGuard] No user, redirecting to signin");
           setAllowed(false);
           router.replace("/signin");
         }

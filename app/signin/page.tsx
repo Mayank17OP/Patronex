@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HomeLink } from "@/components/home-link";
 import { useState, useEffect, useRef } from "react";
 import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 import { formatAuthError } from "@/lib/auth-errors";
-import { redirectToDashboard } from "@/lib/auth-navigation";
 
 export default function SignInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -582,13 +583,15 @@ export default function SignInPage() {
           {/* Form */}
           <form className="fields" onSubmit={async (e) => {
             e.preventDefault();
+            if (isLoading) return;
             setIsLoading(true);
             setError("");
-            
+
             try {
               const res = await signInWithEmailAndPassword(auth, email, password);
               if (res.user) {
-                redirectToDashboard();
+                router.replace("/dashboard");
+                return;
               }
             } catch (err: any) {
               setError("Invalid email or password");

@@ -34,7 +34,9 @@ function dashboardUrlFromLocation(): string {
 export function redirectToDashboard(): void {
   if (typeof window === "undefined") return;
   const path = dashboardUrlFromLocation();
-  window.location.replace(new URL(path, window.location.origin).href);
+  const url = new URL(path, window.location.origin).href;
+  console.log("[redirectToDashboard] Navigating to:", url);
+  window.location.replace(url);
 }
 
 /** Full navigation to site home. */

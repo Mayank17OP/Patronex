@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HomeLink } from "@/components/home-link";
 import { useState, useEffect, useRef } from "react";
 import { createUserWithEmailAndPassword, signInWithRedirect, updateProfile } from "firebase/auth";
 import { auth, googleProvider, githubProvider } from "@/lib/firebase";
 import { formatAuthError } from "@/lib/auth-errors";
-import { redirectToDashboard } from "@/lib/auth-navigation";
 
 const ROLES = [
   { id: "creator",   label: "Creator",   icon: "✦",    desc: "Share your work" },
@@ -15,6 +15,7 @@ const ROLES = [
 ];
 
 export default function SignUpPage() {
+  const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -502,14 +503,16 @@ export default function SignUpPage() {
           {/* Form */}
           <form className="fields" onSubmit={async (e) => {
             e.preventDefault();
+            if (isLoading) return;
             setIsLoading(true);
             setError("");
-            
+
             try {
               const res = await createUserWithEmailAndPassword(auth, email, password);
               if (res.user) {
                 await updateProfile(res.user, { displayName: `${firstName} ${lastName}` });
-                redirectToDashboard();
+                router.replace("/dashboard");
+                return;
               }
             } catch (err: any) {
               setError(err.message || "Failed to create account");
