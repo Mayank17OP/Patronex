@@ -6,22 +6,33 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
+  const [allowed, setAllowed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/signin");
-      } else {
-        setLoading(false);
-      }
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+
+    auth.authStateReady().then(() => {
+      if (cancelled) return;
+      unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (cancelled) return;
+        if (user) {
+          setAllowed(true);
+        } else {
+          setAllowed(false);
+          router.replace("/signin");
+        }
+      });
     });
 
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, [router]);
 
-  if (loading) {
+  if (!allowed) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
         <div className="animate-pulse flex flex-col items-center gap-4">
