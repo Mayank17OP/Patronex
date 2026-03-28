@@ -1,9 +1,3 @@
-const isGithubActions = process.env.GITHUB_ACTIONS || false;
-let repo = '';
-if (isGithubActions) {
-  repo = '/Patronex';
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: {
@@ -17,7 +11,6 @@ const nextConfig = {
     unoptimized: true,
   },
   output: "export",
-  basePath: repo,
 };
 
 export default nextConfig
