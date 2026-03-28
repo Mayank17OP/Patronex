@@ -1,0 +1,87 @@
+declare module 'lucide-react' {
+  import { FC, SVGProps } from 'react';
+  
+  interface IconProps extends SVGProps<SVGSVGElement> {
+    size?: number | string;
+    strokeWidth?: number | string;
+    absoluteStrokeWidth?: boolean;
+    className?: string;
+  }
+  
+  export type Icon = FC<IconProps>;
+  
+  export const Activity: Icon;
+  export const ArrowDownRight: Icon;
+  export const ArrowLeft: Icon;
+  export const ArrowRight: Icon;
+  export const ArrowUpRight: Icon;
+  export const BarChart3: Icon;
+  export const Bell: Icon;
+  export const Bookmark: Icon;
+  export const Briefcase: Icon;
+  export const Check: Icon;
+  export const CheckCircle2: Icon;
+  export const CheckIcon: Icon;
+  export const ChevronDownIcon: Icon;
+  export const ChevronLeft: Icon;
+  export const ChevronRight: Icon;
+  export const ChevronUpIcon: Icon;
+  export const CircleIcon: Icon;
+  export const Clock: Icon;
+  export const Code2: Icon;
+  export const Command: Icon;
+  export const Crown: Icon;
+  export const DollarSign: Icon;
+  export const Dot: Icon;
+  export const Edit3: Icon;
+  export const ExternalLink: Icon;
+  export const Eye: Icon;
+  export const FileText: Icon;
+  export const Filter: Icon;
+  export const FolderGit: Icon;
+  export const GitCommit: Icon;
+  export const GitFork: Icon;
+  export const Github: Icon;
+  export const GitPullRequest: Icon;
+  export const Globe: Icon;
+  export const GripVerticalIcon: Icon;
+  export const Heart: Icon;
+  export const Layers: Icon;
+  export const LayoutGrid: Icon;
+  export const LifeBuoy: Icon;
+  export const Link: Icon;
+  export const Loader2: Icon;
+  export const Loader2Icon: Icon;
+  export const LogOut: Icon;
+  export const Mail: Icon;
+  export const MapPin: Icon;
+  export const Menu: Icon;
+  export const MessageCircle: Icon;
+  export const MessageSquare: Icon;
+  export const Moon: Icon;
+  export const MoreHorizontal: Icon;
+  export const MoreVertical: Icon;
+  export const Music: Icon;
+  export const PanelLeftIcon: Icon;
+  export const Plus: Icon;
+  export const Search: Icon;
+  export const Settings: Icon;
+  export const Share2: Icon;
+  export const Sparkles: Icon;
+  export const Star: Icon;
+  export const Sun: Icon;
+  export const Tag: Icon;
+  export const Target: Icon;
+  export const Terminal: Icon;
+  export const ThumbsUp: Icon;
+  export const Trash2: Icon;
+  export const TrendingUp: Icon;
+  export const Trophy: Icon;
+  export const Twitter: Icon;
+  export const Users: Icon;
+  export const Wallet: Icon;
+  export const X: Icon;
+  export const XIcon: Icon;
+  export const Youtube: Icon;
+  export const Zap: Icon;
+}
