@@ -187,6 +187,38 @@ export function SupporterSidebar() {
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
   const [showChangeRoleModal, setShowChangeRoleModal] = useState(false);
+  
+  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
+  const [instantRole, setInstantRole] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('userRole') || user?.role || '';
+    }
+    return user?.role || '';
+  });
+  
+  // Update role when user changes or when localStorage updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const role = localStorage.getItem('userRole');
+      if (role) setInstantRole(role);
+    };
+    
+    // Listen for storage events (when role changes in other tabs)
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically for same-tab changes
+    const interval = setInterval(() => {
+      const role = localStorage.getItem('userRole');
+      if (role && role !== instantRole) {
+        setInstantRole(role);
+      }
+    }, 100);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [instantRole]);
 
   // Get initials for avatar fallback
   const initials = user?.name
@@ -324,30 +356,30 @@ export function SupporterSidebar() {
                           {loading ? "Loading..." : user?.name || "User"}
                         </span>
                       </div>
-                      {user?.role && (
+                      {instantRole && (
                         <Badge
                           variant="secondary"
                           className={cn(
                             "mt-1 text-xs font-medium capitalize",
-                            user.role === "creator" && "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-600 border-amber-200/50",
-                            user.role === "developer" && "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 border-blue-200/50",
-                            user.role === "supporter" && "bg-gradient-to-r from-rose-100 to-rose-50 text-rose-600 border-rose-200/50"
+                            instantRole === "creator" && "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-600 border-amber-200/50",
+                            instantRole === "developer" && "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 border-blue-200/50",
+                            instantRole === "supporter" && "bg-gradient-to-r from-rose-100 to-rose-50 text-rose-600 border-rose-200/50"
                           )}
                         >
                           <Heart className={cn(
                             "w-3 h-3 mr-1",
-                            user.role === "creator" && "fill-amber-500 text-amber-500",
-                            user.role === "developer" && "fill-blue-500 text-blue-500",
-                            user.role === "supporter" && "fill-rose-500 text-rose-500"
+                            instantRole === "creator" && "fill-amber-500 text-amber-500",
+                            instantRole === "developer" && "fill-blue-500 text-blue-500",
+                            instantRole === "supporter" && "fill-rose-500 text-rose-500"
                           )} />
-                          {user.role}
+                          {instantRole}
                         </Badge>
                       )}
                       <p className="text-xs text-[#365486]/70 mt-1">
-                        {user?.role === "creator" && "Creating amazing content"}
-                        {user?.role === "developer" && "Building the future"}
-                        {user?.role === "supporter" && "Supporting creators & developers"}
-                        {!user?.role && "Select your role to get started"}
+                        {instantRole === "creator" && "Creating amazing content"}
+                        {instantRole === "developer" && "Building the future"}
+                        {instantRole === "supporter" && "Supporting creators & developers"}
+                        {!instantRole && "Select your role to get started"}
                       </p>
                     </div>
                   </div>
@@ -967,20 +999,20 @@ export function SupporterSidebar() {
                   </Avatar>
                   <div>
                     <h3 className="font-bold text-lg text-[#0F1035]">{user?.name || "User"}</h3>
-                    {user?.role && (
+                    {instantRole && (
                       <Badge className={cn(
                         "mt-1 capitalize",
-                        user.role === "creator" && "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-600 border-amber-200/50",
-                        user.role === "developer" && "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 border-blue-200/50",
-                        user.role === "supporter" && "bg-gradient-to-r from-rose-100 to-rose-50 text-rose-600 border-rose-200/50"
+                        instantRole === "creator" && "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-600 border-amber-200/50",
+                        instantRole === "developer" && "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 border-blue-200/50",
+                        instantRole === "supporter" && "bg-gradient-to-r from-rose-100 to-rose-50 text-rose-600 border-rose-200/50"
                       )}>
                         <Heart className={cn(
                           "w-3 h-3 mr-1",
-                          user.role === "creator" && "fill-amber-500",
-                          user.role === "developer" && "fill-blue-500",
-                          user.role === "supporter" && "fill-rose-500"
+                          instantRole === "creator" && "fill-amber-500",
+                          instantRole === "developer" && "fill-blue-500",
+                          instantRole === "supporter" && "fill-rose-500"
                         )} />
-                        {user.role}
+                        {instantRole}
                       </Badge>
                     )}
                     <p className="text-xs text-[#365486]/70 mt-1">Member since 2024</p>
@@ -1042,10 +1074,11 @@ export function SupporterSidebar() {
       <ChangeRoleModal
         isOpen={showChangeRoleModal}
         onClose={() => setShowChangeRoleModal(false)}
-        currentRole={(user?.role as UserRole) || null}
+        currentRole={(instantRole as UserRole) || null}
         onRoleChanged={(newRole) => {
-          // Role changed - could redirect to appropriate page here
-          console.log("Role changed to:", newRole);
+          // INSTANT: Update localStorage and UI immediately
+          localStorage.setItem('userRole', newRole);
+          setInstantRole(newRole);
         }}
       />
     </>

@@ -172,6 +172,36 @@ export function CreatorSidebar() {
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
+  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
+  const [instantRole, setInstantRole] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('userRole') || user?.role || '';
+    }
+    return user?.role || '';
+  });
+  
+  // Update role when localStorage updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const role = localStorage.getItem('userRole');
+      if (role) setInstantRole(role);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    const interval = setInterval(() => {
+      const role = localStorage.getItem('userRole');
+      if (role && role !== instantRole) {
+        setInstantRole(role);
+      }
+    }, 100);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [instantRole]);
+
   // Get initials for avatar fallback
   const initials = user?.name
     ?.split(" ")
@@ -297,14 +327,24 @@ export function CreatorSidebar() {
                       <span className="font-semibold text-[#2D4A6E] block">
                         {loading ? "Loading..." : user?.name || "User"}
                       </span>
-                      <Badge
-                        variant="secondary"
-                        className="mt-1 bg-[#FF8A80]/20 text-[#FF8A80] border-[#FF8A80]/30 text-xs font-medium"
-                      >
-                        Creator
-                      </Badge>
+                      {instantRole && (
+                        <Badge
+                          variant="secondary"
+                          className={cn(
+                            "mt-1 text-xs font-medium capitalize",
+                            instantRole === "creator" && "bg-gradient-to-r from-amber-100 to-amber-50 text-amber-600 border-amber-200/50",
+                            instantRole === "developer" && "bg-gradient-to-r from-blue-100 to-blue-50 text-blue-600 border-blue-200/50",
+                            instantRole === "supporter" && "bg-gradient-to-r from-rose-100 to-rose-50 text-rose-600 border-rose-200/50"
+                          )}
+                        >
+                          {instantRole}
+                        </Badge>
+                      )}
                       <p className="text-xs text-[#2D4A6E]/60 mt-1">
-                        Crafting digital experiences
+                        {instantRole === "creator" && "Creating amazing content"}
+                        {instantRole === "developer" && "Building the future"}
+                        {instantRole === "supporter" && "Supporting creators & developers"}
+                        {!instantRole && "Select your role to get started"}
                       </p>
                     </div>
                   </div>

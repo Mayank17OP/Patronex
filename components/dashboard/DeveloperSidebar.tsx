@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -108,6 +108,36 @@ export function DeveloperSidebar({ className }: DeveloperSidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
 
+  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
+  const [instantRole, setInstantRole] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('userRole') || user?.role || '';
+    }
+    return user?.role || '';
+  });
+  
+  // Update role when localStorage updates
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const role = localStorage.getItem('userRole');
+      if (role) setInstantRole(role);
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    const interval = setInterval(() => {
+      const role = localStorage.getItem('userRole');
+      if (role && role !== instantRole) {
+        setInstantRole(role);
+      }
+    }, 100);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [instantRole]);
+
   // Get user's display name from Firebase or profile
   const userName = user?.name || auth.currentUser?.displayName || "Developer";
   const userAvatar = user?.profilePic || auth.currentUser?.photoURL || undefined;
@@ -189,19 +219,24 @@ export function DeveloperSidebar({ className }: DeveloperSidebarProps) {
                 <h2 className="text-base font-bold text-[#2D4A6E] truncate">
                   {loading ? "..." : userName}
                 </h2>
-                <div className="flex items-center gap-2">
+                {instantRole && (
                   <Badge
-                    className="px-2 py-0.5 text-xs font-medium text-white border-none shadow-sm"
-                    style={{
-                      backgroundColor: "#80CBC4",
-                      borderRadius: "6px",
-                    }}
+                    className={cn(
+                      "px-2 py-0.5 text-xs font-medium capitalize border-none shadow-sm",
+                      instantRole === "creator" && "bg-amber-500 text-white",
+                      instantRole === "developer" && "bg-blue-500 text-white",
+                      instantRole === "supporter" && "bg-rose-500 text-white"
+                    )}
+                    style={{ borderRadius: "6px" }}
                   >
-                    Developer
+                    {instantRole}
                   </Badge>
-                </div>
+                )}
                 <p className="text-xs text-[#2D4A6E]/50 mt-1 truncate">
-                  Building open-source tools
+                  {instantRole === "creator" && "Creating amazing content"}
+                  {instantRole === "developer" && "Building the future"}
+                  {instantRole === "supporter" && "Supporting creators"}
+                  {!instantRole && "Select your role"}
                 </p>
               </div>
             </motion.div>
