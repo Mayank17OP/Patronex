@@ -83,8 +83,10 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    // Connect to MongoDB
-    await connectDB();
+    // Connect to MongoDB (only if not in Vercel serverless)
+    if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+      await connectDB();
+    }
 
     // Start server (only if not running in Vercel)
     if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
@@ -101,6 +103,35 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+// For Vercel serverless: Connect to DB per request
+let dbConnection = null;
+
+const connectToDatabase = async () => {
+  if (dbConnection) {
+    return dbConnection;
+  }
+  
+  try {
+    dbConnection = await connectDB();
+    return dbConnection;
+  } catch (error) {
+    console.error('Database connection error:', error);
+    throw error;
+  }
+};
+
+// Middleware to connect to database for each request in serverless
+app.use('/api', async (req, res, next) => {
+  if (process.env.VERCEL) {
+    try {
+      await connectToDatabase();
+    } catch (error) {
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+  }
+  next();
+});
 
 // Start server if not in Vercel environment
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
