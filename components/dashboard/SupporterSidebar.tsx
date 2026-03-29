@@ -34,6 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { auth } from "@/lib/firebase";
 import { LogoutButton } from "@/components/logout-button";
 
 // Types
@@ -187,30 +188,30 @@ export function SupporterSidebar() {
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
   const [showChangeRoleModal, setShowChangeRoleModal] = useState(false);
+
+  const userAvatar = user?.profilePic || auth.currentUser?.photoURL || undefined;
   
-  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
-  const [instantRole, setInstantRole] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('userRole') || user?.role || '';
-    }
-    return user?.role || '';
-  });
+  // FIX: Initialize with user.role only to avoid hydration mismatch
+  const [instantRole, setInstantRole] = useState<string>(user?.role || '');
   
-  // Update role when user changes or when localStorage updates
+  // Sync from localStorage after hydration to avoid server/client mismatch
   useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role && role !== instantRole) {
+      setInstantRole(role);
+    }
+    
     const handleStorageChange = () => {
-      const role = localStorage.getItem('userRole');
-      if (role) setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole) setInstantRole(newRole);
     };
     
-    // Listen for storage events (when role changes in other tabs)
     window.addEventListener('storage', handleStorageChange);
     
-    // Also check periodically for same-tab changes
     const interval = setInterval(() => {
-      const role = localStorage.getItem('userRole');
-      if (role && role !== instantRole) {
-        setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole && newRole !== instantRole) {
+        setInstantRole(newRole);
       }
     }, 100);
     
@@ -339,7 +340,7 @@ export function SupporterSidebar() {
                     <div className="relative">
                       <Avatar className="w-14 h-14 border-2 border-white shadow-md">
                         <AvatarImage
-                          src={user?.profilePic || `https://i.pravatar.cc/150?u=${user?.email || 'supporter'}`}
+                          src={userAvatar}
                           alt={user?.name || "User"}
                         />
                         <AvatarFallback className="bg-gradient-to-br from-[#7FC7D9] to-[#365486] text-white text-lg">
@@ -992,7 +993,7 @@ export function SupporterSidebar() {
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
-                    <AvatarImage src={user?.profilePic || `https://i.pravatar.cc/150?u=${user?.email || 'supporter'}`} alt={user?.name || "User"} />
+                    <AvatarImage src={userAvatar} alt={user?.name || "User"} />
                     <AvatarFallback className="bg-gradient-to-br from-[#7FC7D9] to-[#365486] text-white text-2xl">
                       {initials}
                     </AvatarFallback>
