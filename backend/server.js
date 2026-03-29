@@ -32,8 +32,9 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+// CORS configuration for Vercel
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || ['http://localhost:3000', 'https://your-frontend-domain.vercel.app'],
   credentials: true,
 }));
 
@@ -85,20 +86,25 @@ const startServer = async () => {
     // Connect to MongoDB
     await connectDB();
 
-    // Start server
-    app.listen(PORT, () => {
-      console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📝 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`🔐 Firebase Auth enabled`);
-      console.log(`🗄️  MongoDB connected`);
-      console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}\n`);
-    });
+    // Start server (only if not running in Vercel)
+    if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+      app.listen(PORT, () => {
+        console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+        console.log(`📝 API Base URL: http://localhost:${PORT}/api`);
+        console.log(`🔐 Firebase Auth enabled`);
+        console.log(`🗄️  MongoDB connected`);
+        console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}\n`);
+      });
+    }
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
   }
 };
 
-startServer();
+// Start server if not in Vercel environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  startServer();
+}
 
 export default app;
