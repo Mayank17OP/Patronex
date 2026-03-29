@@ -28,6 +28,9 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { ChangeRoleModal } from "@/components/change-role-modal";
+import { UserRole } from "@/components/role-selection-modal";
+import { auth } from "@/lib/firebase";
 
 // Types
 interface NavItem {
@@ -171,28 +174,31 @@ export function CreatorSidebar() {
   const [showMessages, setShowMessages] = useState(false);
   const [selectedChat, setSelectedChat] = useState<Conversation | null>(null);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
+  const [showChangeRoleModal, setShowChangeRoleModal] = useState(false);
 
-  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
-  const [instantRole, setInstantRole] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('userRole') || user?.role || '';
-    }
-    return user?.role || '';
-  });
+  const userAvatar = user?.profilePic || auth.currentUser?.photoURL || undefined;
+
+  // FIX: Initialize with user.role only to avoid hydration mismatch
+  const [instantRole, setInstantRole] = useState<string>(user?.role || '');
   
-  // Update role when localStorage updates
+  // Sync from localStorage after hydration to avoid server/client mismatch
   useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role && role !== instantRole) {
+      setInstantRole(role);
+    }
+    
     const handleStorageChange = () => {
-      const role = localStorage.getItem('userRole');
-      if (role) setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole) setInstantRole(newRole);
     };
     
     window.addEventListener('storage', handleStorageChange);
     
     const interval = setInterval(() => {
-      const role = localStorage.getItem('userRole');
-      if (role && role !== instantRole) {
-        setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole && newRole !== instantRole) {
+        setInstantRole(newRole);
       }
     }, 100);
     
@@ -313,7 +319,7 @@ export function CreatorSidebar() {
                     <div className="relative">
                       <Avatar className="w-14 h-14 border-2 border-white shadow-md">
                         <AvatarImage
-                          src={user?.profilePic || `https://i.pravatar.cc/150?u=${user?.email || 'user'}`}
+                          src={userAvatar}
                           alt={user?.name || "User"}
                         />
                         <AvatarFallback className="bg-gradient-to-br from-[#2D4A6E] to-[#FF8A80] text-white text-lg">
@@ -885,7 +891,7 @@ export function CreatorSidebar() {
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar className="w-20 h-20 border-4 border-white shadow-lg">
-                    <AvatarImage src={user?.profilePic || `https://i.pravatar.cc/150?u=${user?.email || 'user'}`} />
+                    <AvatarImage src={userAvatar} />
                     <AvatarFallback className="bg-gradient-to-br from-[#2D4A6E] to-[#FF8A80] text-white text-2xl">
                       {initials}
                     </AvatarFallback>
@@ -931,11 +937,31 @@ export function CreatorSidebar() {
                     Settings
                   </Button>
                 </div>
+
+                <Button
+                  variant="outline"
+                  className="w-full mt-3 rounded-xl border-[#E0F2F1] bg-white hover:bg-[#E0F2F1] text-[#2D4A6E]"
+                  onClick={() => setShowChangeRoleModal(true)}
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Change Role
+                </Button>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      {/* Change Role Modal */}
+      <ChangeRoleModal
+        isOpen={showChangeRoleModal}
+        onClose={() => setShowChangeRoleModal(false)}
+        currentRole={(instantRole as UserRole) || null}
+        onRoleChanged={(newRole) => {
+          localStorage.setItem('userRole', newRole);
+          setInstantRole(newRole);
+        }}
+      />
     </>
   );
 }

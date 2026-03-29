@@ -20,6 +20,9 @@ import {
   Sparkles,
   ChevronRight,
 } from "lucide-react";
+import { ChangeRoleModal } from "@/components/change-role-modal";
+import { UserRole } from "@/components/role-selection-modal";
+import { NewDeveloperProjectModal } from "@/components/new-developer-project-modal";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -107,28 +110,30 @@ export function DeveloperSidebar({ className }: DeveloperSidebarProps) {
   const [activeTab, setActiveTab] = useState<string>("home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activePanel, setActivePanel] = useState<string | null>(null);
+  const [showChangeRoleModal, setShowChangeRoleModal] = useState(false);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
 
-  // INSTANT: Get role from localStorage for immediate display (no Firestore delay)
-  const [instantRole, setInstantRole] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('userRole') || user?.role || '';
-    }
-    return user?.role || '';
-  });
+  // FIX: Initialize with user.role only to avoid hydration mismatch
+  const [instantRole, setInstantRole] = useState<string>(user?.role || '');
   
-  // Update role when localStorage updates
+  // Sync from localStorage after hydration to avoid server/client mismatch
   useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role && role !== instantRole) {
+      setInstantRole(role);
+    }
+    
     const handleStorageChange = () => {
-      const role = localStorage.getItem('userRole');
-      if (role) setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole) setInstantRole(newRole);
     };
     
     window.addEventListener('storage', handleStorageChange);
     
     const interval = setInterval(() => {
-      const role = localStorage.getItem('userRole');
-      if (role && role !== instantRole) {
-        setInstantRole(role);
+      const newRole = localStorage.getItem('userRole');
+      if (newRole && newRole !== instantRole) {
+        setInstantRole(newRole);
       }
     }, 100);
     
@@ -500,9 +505,26 @@ export function DeveloperSidebar({ className }: DeveloperSidebarProps) {
                 style={{
                   background: "linear-gradient(135deg, #2D4A6E 0%, #3D5A7E 100%)",
                 }}
+                onClick={() => setShowNewProjectModal(true)}
               >
                 <Plus className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
                 New Project
+              </Button>
+            </motion.div>
+
+            {/* Change Role Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <Button
+                variant="outline"
+                className="w-full h-11 rounded-xl font-medium border-[#80CBC4] text-[#2D4A6E] hover:bg-[#E0F2F1] transition-all duration-300 group"
+                onClick={() => setShowChangeRoleModal(true)}
+              >
+                <Sparkles className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                Change Role
               </Button>
             </motion.div>
           </div>
@@ -542,6 +564,24 @@ export function DeveloperSidebar({ className }: DeveloperSidebarProps) {
           </div>
         </motion.div>
       </aside>
+      {/* Change Role Modal */}
+      <ChangeRoleModal
+        isOpen={showChangeRoleModal}
+        onClose={() => setShowChangeRoleModal(false)}
+        currentRole={(instantRole as UserRole) || null}
+        onRoleChanged={(newRole) => {
+          localStorage.setItem('userRole', newRole);
+          setInstantRole(newRole);
+        }}
+      />
+      <NewDeveloperProjectModal
+        isOpen={showNewProjectModal}
+        onClose={() => setShowNewProjectModal(false)}
+        onSuccess={() => {
+          // Optionally refresh projects list
+          console.log("Project created successfully");
+        }}
+      />
     </>
   );
 }

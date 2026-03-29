@@ -36,6 +36,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { LogoutButton } from "@/components/logout-button";
 import { auth } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
+import { NewCreatorProjectModal } from "@/components/new-creator-project-modal";
 
 // Mock data for creator's posts
 const myPosts = [
@@ -146,6 +147,7 @@ export default function CreatorDashboardPage() {
   const [visibility, setVisibility] = useState<"public" | "supporters">("public");
   const [hoveredPost, setHoveredPost] = useState<string | null>(null);
   const [hasPosted, setHasPosted] = useState(true);
+  const [showNewContentModal, setShowNewContentModal] = useState(false);
 
   // Get user's display name from Firebase or profile
   const userName = user?.name || auth.currentUser?.displayName || "Creator";
@@ -162,7 +164,17 @@ export default function CreatorDashboardPage() {
             Manage your creator content and community
           </p>
         </div>
-        <LogoutButton variant="outline" className="rounded-xl border-[#2D4A6E]/20" />
+        <div className="flex items-center gap-3">
+          <Button
+            className="rounded-xl px-4 py-2 h-10 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: "#FF8A80" }}
+            onClick={() => setShowNewContentModal(true)}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            New Content
+          </Button>
+          <LogoutButton variant="outline" className="rounded-xl border-[#2D4A6E]/20" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -616,6 +628,14 @@ export default function CreatorDashboardPage() {
           </motion.div>
         </div>
       </div>
+
+      <NewCreatorProjectModal
+        isOpen={showNewContentModal}
+        onClose={() => setShowNewContentModal(false)}
+        onSuccess={() => {
+          console.log("Content created successfully");
+        }}
+      />
     </div>
   );
 }
