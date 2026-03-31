@@ -1,95 +1,311 @@
 # Patronex
----
 
-Patronex is a GitHub first, community focused funding layer that helps open source maintainers and indie builders receive recurring, transparent, and verifiable support with practical anti-abuse protections and a blockchain-free public ledger.
+> **The open-source funding layer that actually works.**
 
----
-## Overview
-Patronex is an open source, GitHub first platform focused on recurring memberships, repo-centric discovery, corporate sponsorship support, and tamper evident public financial records implemented without blockchain. The product centers on reliable subscriptions and structured sponsorship agreements that are discoverable from project READMEs and auditable for sponsors.
+Patronex is a **GitHub-first, community-powered platform** helping open-source maintainers and indie builders earn **recurring, transparent, and verifiable support** — with practical anti-abuse protections and a blockchain-free public ledger.
 
 ---
 
-## Problem
-Open-source projects and independent creators need predictable recurring funding and clear accountability. Existing platforms (GitHub Sponsors, Patreon, Open Collective) trade off discoverability, fees, or auditability, and donation/reputation signals can be manipulated by fake accounts (Sybil attacks). There is no single practical service that (a) converts interested users into recurring sponsors, (b) ties money to verifiable contribution evidence, and (c) defends against abuse all without introducing blockchain/Web3 complexity.
+## ✨ What Makes Patronex Different
+
+| Others | Patronex |
+|--------|----------|
+| High platform fees | Transparent, minimal fees |
+| Opaque transactions | Public, verifiable ledger |
+| Vulnerable to fake accounts | GitHub-backed reputation + Sybil protection |
+| Complex Web3 onboarding | Simple OAuth + repo-first discovery |
 
 ---
 
-## Key goals
-- Increase recurring conversion via repo first CTAs and membership UX.  
-- Build trust by showing contribution metrics and publishing verifiable ledger entries.  
-- Reduce abuse via GitHub-based reputation and pragmatic anti Sybil rules.  
-- Offer self-hosting and transparent fee breakdowns so projects control costs and privacy.
+## 🚀 Live Features
+
+### **Repo-First Creator Pages**
+Beautiful public profiles showcasing project bios, repo links, funding goals, and contribution metrics (PRs merged, releases, issues closed). Visitors immediately understand what their membership supports.
+
+### **GitHub-First Onboarding**
+One-click GitHub OAuth imports your repo metadata and contribution history automatically. README badge generator included for seamless project integration.
+
+### **Multi-Role Dashboard Experience**
+Three tailored dashboard experiences for different user types:
+
+**🎨 Creator Dashboard**
+- 📊 **Audience** — track followers, growth analytics, and engagement
+- 📝 **Content** — manage posts, updates, and creator feed
+- 💰 **Earnings** — view revenue, payouts, and financial insights
+- 🔖 **Saved** — bookmark projects and creators for later
+- 🔍 **Explore** — discover other creators and collaboration opportunities
+
+**💻 Developer Dashboard**
+- 🔍 **Explore** — discover open-source projects
+- 📈 **Insights** — track project metrics and contributor activity
+- 🚀 **Projects** — manage your repositories and funding goals
+- 🔖 **Saved** — bookmark interesting projects
+- 🤝 **Sponsors** — view and manage sponsor relationships
+
+**❤️ Supporter Dashboard**
+- 💝 **Donations** — track all your contributions in one place
+- 📅 **Subscriptions** — manage recurring memberships
+- 🔍 **Explore** — discover new creators and projects to support
+- 👥 **Following** — keep up with creators you support
+- 🔖 **Saved** — bookmark creators for later support
+- ⚙️ **Settings** — customize your supporter profile
+
+### **Dynamic Feed System**
+- **Feed Composer** — creators can post updates to their supporters
+- **Feed Post Cards** — rich posts with media, reactions, and engagement
+- **Feed Filters** — sort by creator type, trending, or newest
+- **Creator Spotlight** — highlighted creators and success stories
+- **Real-time Search** — find creators and projects instantly
+
+### **Role-Based Profiles**
+- **CreatorProfile** — showcase content, earnings, and audience
+- **DeveloperProfile** — highlight projects, contributions, and GitHub stats
+- **SupporterProfile** — display supported creators and giving history
+
+### **Recurring Memberships & Corporate Sponsorships**
+Monthly/annual membership tiers with benefits. Corporate mode for company contributions with logo display and SLA notes.
+
+### **Transparent Public Ledger (No Blockchain!)**--POTENTIAL FEATURE
+- Append-only ledger with SHA-256 hashed entries
+- Server-signed for integrity
+- Periodic batch anchoring to public Git commits
+- One-click CSV/JSON exports
+
+### **Anti-Abuse & Reputation System**-- POTENTIAL FEATURE
+GitHub account verification with reputation scoring (account age + contributions). Rate limiting, CAPTCHA, and anomaly detection keep the platform fair.
 
 ---
 
-## Features
+## 🛠️ Tech Stack
 
-**Repo-First Creator Pages**  
-Public project pages with project bio, repo links, funding summary, and contribution metrics (PRs merged, releases, issues closed). Clear "what membership supports" copy.
-
-**GitHub-First Onboarding**  
-OAuth GitHub connect to import repo metadata and contribution signals automatically. README badge generator for one-click onboarding.
-
-**Recurring Memberships & Structured Sponsorships**  
-Monthly/annual tiers with benefits. Corporate/org mode for company contributions (logo, SLA notes, matching programs).
-
-**Milestone Escrow**  
-Sponsors can pledge funds against milestones/releases; funds held in escrow and released on verifiable completion (release tag detection or moderator confirmation).
-
-**Transparent Public Ledger (No Blockchain)**  
-Append-only ledger of subscriptions, sponsorships, escrow events, payouts, and refunds. Each entry hashed & server-signed; batch hashes periodically anchored to a public location (e.g., Git commits). Downloadable CSV/JSON reports.
-
-**Low-Fee & Self-Host Option**  
-Dockerized deployment for community hosting. Optional Stripe Connect for managed payouts. UI displays exact fee breakdown before payout.
-
-**Moderation & Trust Tools**  
-Flagging, manual review flows, lightweight KYC for high value payouts, and public moderation logs.
-
-**Sybil Protection & Reputation**  
-GitHub link + reputation score (age + contributions). Example rule: verification-eligible when GitHub account age ≥ 30 days or total contributions ≥ 3. Rate limits, CAPTCHA, anomaly detection, and community vouching supplement protections.
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Next.js 16 + React 19 + TypeScript |
+| **Styling** | Tailwind CSS 4 + Radix UI components |
+| **Backend** | Firebase Auth + Firestore |
+| **Animations** | Framer Motion |
+| **Charts** | Recharts |
+| **Icons** | Lucide React |
+| **Payments** | Razor Pay integration ready |
+| **Deployment** | Vercel-ready |
 
 ---
 
-## MVP (demo scope)
-- Repo-first creator profile with membership tiers and GitHub metrics.  
-- README badge generator & one-click GitHub onboarding.  
-- Recurring subscription flows (Stripe test mode or mocked payments).  
-- Corporate sponsorship demo with milestone escrow (simulated verification).  
-- Public ledger UI with signed entries, CSV export, and a verification script.  
-- Admin payout dashboard, moderation tools, and a reputation-scoring demo.
+## 📦 Complete Project Structure
+
+```
+app/
+├── page.tsx                    # Landing page (Hero, Features, About, CTA)
+├── layout.tsx                  # Root layout with theme provider
+├── globals.css                 # Global styles + Tailwind
+│
+├── creator/                    # Creator role flows
+│   ├── page.tsx               # Creator dashboard home
+│   ├── layout.tsx             # Creator sidebar layout
+│   ├── audience/
+│   │   └── page.tsx           # Audience analytics & followers
+│   ├── content/
+│   │   └── page.tsx           # Content management & posts
+│   ├── earnings/
+│   │   └── page.tsx           # Revenue & earnings dashboard
+│   ├── explore/
+│   │   └── page.tsx           # Discover other creators
+│   ├── profile/
+│   │   └── (empty)            # Creator public profile
+│   └── saved/
+│       └── page.tsx           # Saved bookmarks
+│
+├── developer/                  # Developer role flows
+│   ├── page.tsx               # Developer dashboard home
+│   ├── layout.tsx             # Developer sidebar layout
+│   ├── explore/
+│   │   └── page.tsx           # Discover projects
+│   ├── insights/
+│   │   └── page.tsx           # Project analytics
+│   ├── projects/
+│   │   └── page.tsx           # Manage repositories
+│   ├── saved/
+│   │   └── page.tsx           # Saved projects
+│   └── sponsors/
+│       └── page.tsx           # Sponsor management
+│
+├── dashboard/                  # Supporter role flows
+│   ├── page.tsx               # Supporter dashboard home
+│   ├── layout.tsx             # Dashboard sidebar layout
+│   ├── donations/
+│   │   └── page.tsx           # Donation history
+│   ├── explore/
+│   │   └── page.tsx           # Discover creators
+│   ├── following/
+│   │   └── page.tsx           # Following list
+│   ├── saved/
+│   │   └── page.tsx           # Saved creators
+│   ├── settings/
+│   │   └── page.tsx           # Account settings
+│   └── subscriptions/
+│       └── page.tsx           # Manage memberships
+│
+├── profile/
+│   └── page.tsx               # User profile page
+├── signin/
+│   └── page.tsx               # Authentication (sign in)
+├── signup/
+│   └── page.tsx               # Authentication (sign up)
+└── supporter/                  # (Reserved for future)
+
+components/
+├── dashboard/                  # Dashboard-specific components
+│   ├── ActivityAndEarnings.tsx
+│   ├── CreatorSidebar.tsx     # 36K lines - full creator navigation
+│   ├── DeveloperSidebar.tsx   # 19K lines - dev navigation
+│   ├── SupporterSidebar.tsx   # 40K lines - supporter navigation
+│   ├── IntegrationPanel.tsx
+│   ├── ProgressChecklist.tsx
+│   ├── Sidebar.tsx            # Base sidebar component
+│   ├── StatsGrid.tsx
+│   ├── TopBar.tsx
+│   └── WelcomeSection.tsx
+│
+├── feed/                       # Social feed components
+│   ├── CreatorSpotlightCard.tsx
+│   ├── FeedComposer.tsx
+│   ├── FeedFilterChips.tsx
+│   ├── FeedPostCard.tsx
+│   ├── FeedSidebar.tsx
+│   ├── FeedSkeleton.tsx
+│   ├── FeedSkeletonCard.tsx
+│   ├── FeedTopBar.tsx
+│   ├── RightPanel.tsx
+│   └── SearchSpotlight.tsx
+│
+├── profile/                    # Profile page components
+│   ├── CreatorProfile.tsx     # 32K lines
+│   ├── DeveloperProfile.tsx   # 31K lines
+│   └── SupporterProfile.tsx   # 35K lines
+│
+├── ui/                         # 57+ Radix-based UI primitives
+│   ├── accordion.tsx
+│   ├── alert-dialog.tsx
+│   ├── alert.tsx
+│   ├── avatar.tsx
+│   ├── badge.tsx
+│   ├── button.tsx
+│   ├── card.tsx
+│   ├── carousel.tsx
+│   ├── chart.tsx
+│   ├── command.tsx
+│   ├── dialog.tsx
+│   ├── dropdown-menu.tsx
+│   ├── form.tsx
+│   ├── input.tsx
+│   ├── navigation-menu.tsx
+│   ├── select.tsx
+│   ├── sheet.tsx
+│   ├── sidebar.tsx
+│   ├── table.tsx
+│   ├── tabs.tsx
+│   ├── toast.tsx
+│   └── [40+ more components...]
+│
+├── about-section.tsx          # Landing: About section
+├── creators-developers-section.tsx
+├── cta-section.tsx            # Landing: Call-to-action
+├── features-section.tsx       # Landing: Features grid
+├── footer.tsx                 # Site footer
+├── hero-section.tsx           # Landing: Hero banner
+├── navbar.tsx                 # Navigation bar
+├── sliding-cards.tsx          # Landing: Animated cards
+├── auth-guard.tsx             # Auth protection
+├── auth-redirect-handler.tsx  # Post-auth redirects
+├── reveal.tsx                 # Scroll reveal animations
+└── theme-provider.tsx         # Dark/light mode
+
+lib/
+├── firebase.ts                # Firebase configuration 
+├── auth-errors.ts             # Auth error handling
+└── utils.ts                   # Utility functions
+
+hooks/
+├── use-mobile.ts              # Mobile detection hook
+└── use-toast.ts               # Toast notification hook
+
+types/
+└── lucide-react.d.ts          # Type definitions
+
+styles/
+└── globals.css                # Global styles
+
+public/
+├── icon.svg                   # App icon
+├── icon-dark-32x32.png
+├── icon-light-32x32.png
+├── apple-icon.png
+├── placeholder-logo.png
+├── placeholder-logo.svg
+├── placeholder-user.jpg
+├── placeholder.jpg
+└── placeholder.svg
+```
 
 ---
 
-## How the public ledger works (blockchain-free)
-- **Append-only storage:** ledger entries are write once via DB rules/triggers.  
-- **Canonical JSON + hash:** each entry serialized deterministically and hashed (SHA-256).  
-- **Server signature:** server signs each hash with a private key; public key is published.  
-- **Public anchoring:** batch hashes committed to a public Git repo (or other public anchor) on a cadence to provide tamper-evident timestamps.  
-- **Verification:** open script recomputes hashes, verifies signatures, and confirms commits in the public history. Ledger entries include payment processor IDs (e.g., Stripe) for cross-checks.
+## 🚀 Getting Started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Firebase credentials
+# Run development server
+pnpm dev
+```
+Open [http://localhost:3000](http://localhost:3000) to see the magic ✨
+---
+
+## 📊 Data & Reporting
+
+- **Monthly reports** — automated expense and revenue summaries
+- **One-click exports** — CSV/JSON of transactions, sponsors, and distributions
+- **Public verification** — anyone can audit the ledger independently
 
 ---
 
-## Recommended tech stack
-- **Frontend:** React (Vite) or Next.js deploy on Vercel.  
-- **Backend / Data:** Firebase Auth + Firestore (append-only collections) or PostgreSQL with write once triggers. Serverless functions for signing & anchoring.  
-- **Payments:** Stripe (test mode for demo), Stripe Connect for payouts; UPI gateway path for India (Razorpay / Cashfree).  
-- **CI/CD:** GitHub Actions.  
-- **Self-host:** Docker Compose (frontend + backend + DB).  
+## 🔮 Roadmap
+
+- [x] Landing page with modern animations (Framer Motion)
+- [x] Multi-role dashboard (Creator / Developer / Supporter)
+- [x] Dynamic feed system with composer and interactions
+- [x] GitHub OAuth integration
+- [x] Firebase backend (Auth + Firestore) 
+- [x] Role-based profiles with full feature sets
+- [x] 57+ UI components (Radix + Tailwind)
+- [ ] Live Razor Pay payments
+- [ ] Milestone escrow system
+- [ ] Self-hosted Docker deployment
+- [ ] Mobile app (React Native)
 
 ---
 
-## Data & reporting
-- Monthly expense report generation.  
-- One-click CSV/JSON exports of transactions, sponsors, and distributions for transparency and accounting.
+## 🤝 Contributing
+
+Patronex is open source and built by the community, for the community. PRs welcome!
 
 ---
 
-## License
-MIT License
+## 📄 License
+
+MIT License — use it, fork it, make it yours.
 
 ---
 
-## Vision
-Make recurring sponsorship the default for open-source projects by combining repo-first discovery, membership UX, practical anti-abuse protections, and a blockchain-free audit trail so interest converts into sustainable funding while preserving fairness and trust.
+## 🌟 Vision
+
+> *Make recurring sponsorship the default for open-source projects.*
+
+By combining **repo-first discovery**, **smooth membership UX**, **practical anti-abuse protections**, and a **blockchain-free audit trail** — we turn casual interest into sustainable funding, fairly and transparently.
 
 ---
+
+**⭐ Star this repo if you believe open-source deserves better funding tools!**
